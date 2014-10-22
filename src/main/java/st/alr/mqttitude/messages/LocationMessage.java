@@ -17,8 +17,9 @@ public class LocationMessage {
 	Waypoint waypoint;
 
 	String description;
-    String trackerId;
-    int transition;
+    	String trackerId;
+    	String trigger;
+    	int transition;
 	int battery;
 
 	boolean supressesTicker;
@@ -29,6 +30,8 @@ public class LocationMessage {
 		this.battery = -1;
 		this.waypoint = null;
 		this.supressesTicker = false;
+        	this.trackerId = null;
+        	this.trigger = null;
 	}
 
 	public boolean doesSupressTicker() {
@@ -51,52 +54,50 @@ public class LocationMessage {
 		this.transition = transition;
 	}
 
+	public void setTrackerId(String tid) { this.trackerId = tid; }
+	public String getTrackerId() { return this.trackerId; }
+
+
+	public void setTrigger(String t) { this.trigger = t; }
+	public String getTrigger() { return this.trigger; }
+
 	public void setBattery(int battery) {
 		this.battery = battery;
 	}
 
-    public void setTrackerId(String tid) {
-        this.trackerId = tid;
-    }
-
-    @Override
-    public String toString() {
-        return this.toJSONObject().toString();
-    }
+	@Override
+	public String toString() {
+		return this.toJSONObject().toString();
+	}
 
 	public StringifiedJSONObject toJSONObject() {
-        StringifiedJSONObject json = new StringifiedJSONObject();
+        	StringifiedJSONObject json = new StringifiedJSONObject();
 
-        try {
-            json.put("_type", "location")
-                    .put("lat", this.location.getLatitude())
-                    .put("lon", this.location.getLongitude())
-                    .put("tst", (TimeUnit.MILLISECONDS.toSeconds(this.location.getTime())))
-                    .put("acc", Math.round(this.location.getLocation().getAccuracy() * 100) / 100.0d);
+        	try {
+			json.put("_type", "location")
+			.put("lat", this.location.getLatitude())
+			.put("lon", this.location.getLongitude())
+			.put("tst", (TimeUnit.MILLISECONDS.toSeconds(this.location.getTime())))
+			.put("acc", Math.round(this.location.getLocation().getAccuracy() * 100) / 100.0d);
 
-            if (this.battery != -1)
-                json.put("batt", this.battery);
+            	if (this.battery != -1)
+            	    json.put("batt", this.battery);
 
+		if ((this.waypoint != null) && ((this.transition == Geofence.GEOFENCE_TRANSITION_EXIT) || (this.transition == Geofence.GEOFENCE_TRANSITION_ENTER))) {
+                	if (this.waypoint.getShared())
+                	    json.put("desc", this.waypoint.getDescription());
 
-            if ((this.waypoint != null) && ((this.transition == Geofence.GEOFENCE_TRANSITION_EXIT) || (this.transition == Geofence.GEOFENCE_TRANSITION_ENTER))) {
-                if (this.waypoint.getShared())
-                    json.put("desc", this.waypoint.getDescription());
+                	json.put("event", this.transition == Geofence.GEOFENCE_TRANSITION_ENTER ? "enter" : "leave");
+            	}
 
-                json.put("event", this.transition == Geofence.GEOFENCE_TRANSITION_ENTER ? "enter" : "leave");
+            	if(trigger != null)
+            	    json.put("t", trigger);
+            
+	   	if (this.trackerId != null && !this.trackerId.isEmpty()) 
+           	     json.put("tid", this.trackerId);
 
-            }
-
-            if (this.trackerId != null && !this.trackerId.isEmpty()) {
-
-                json.put("tid", this.trackerId);
-            }
-
-        } catch (JSONException e) {
-
-        }
-
-            return json;
-
+        	} catch (JSONException e) {}
+    	    	return json;
 	}
 
 	public GeocodableLocation getLocation() {
@@ -114,8 +115,6 @@ public class LocationMessage {
 	public int getBattery() {
 		return this.battery;
 	}
-
-    public String getTrackerId(){ return this.trackerId; }
 
 	public static LocationMessage fromJsonObject(StringifiedJSONObject json) {
 		try {
@@ -163,4 +162,7 @@ public class LocationMessage {
 		this.description = string;
 	}
 
+    public String getDescription() {
+        return description;
+    }
 }

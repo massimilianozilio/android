@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/android-myfork.iml" filepath="$PROJECT_DIR$/android-myfork.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/DaoGenerator/DaoGenerator.iml" filepath="$PROJECT_DIR$/DaoGenerator/DaoGenerator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
+>>>>>>> FETCH_HEAD
     </modules>
   </component>
 </project>

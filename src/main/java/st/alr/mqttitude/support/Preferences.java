@@ -1,6 +1,5 @@
 package st.alr.mqttitude.support;
 
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import st.alr.mqttitude.App;
@@ -12,7 +11,6 @@ import android.util.Log;
 import com.google.android.gms.location.LocationRequest;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import de.greenrobot.event.EventBus;
 import st.alr.mqttitude.services.ServiceProxy;
@@ -73,7 +71,7 @@ public class Preferences {
 
     public static boolean canConnect() {
 
-        return     !getHost().trim().equals("")
+        return  !getHost().trim().equals("")
                 && ((getAuth() && !getUsername().trim().equals("") && !getPassword().trim().equals("")) || (!getAuth()))
                 && ((getTls() == getIntResource(R.integer.valTls)) || (getTls() == getIntResource(R.integer.valTlsNone) || (getTls() == getIntResource(R.integer.valTlsCustom) && !getTlsCrtPath().trim().equals(""))))
                 ;
@@ -101,7 +99,6 @@ public class Preferences {
                     .put(getStringRessource(R.string.keyConnectionAdvancedMode), getConnectionAdvancedMode())
                     .put(getStringRessource(R.string.keySub), getSub())
                     .put(getStringRessource(R.string.keyPub), getPub())
-                    .put(getStringRessource(R.string.keyUpdateAddressBook), getUpdateAdressBook())
                     .put(getStringRessource(R.string.keyPubInterval), getPubInterval())
                     .put(getStringRessource(R.string.keyPubTopicBase), getPubTopicBase(true))
                     .put(getStringRessource(R.string.keyNotification), getNotification())
@@ -115,7 +112,9 @@ public class Preferences {
                     .put(getStringRessource(R.string.keyLocatorAccuracyForeground), getLocatorAccuracyForeground())
                     .put(getStringRessource(R.string.keyRemoteCommandDump), getRemoteCommandDump())
                     .put(getStringRessource(R.string.keyRemoteCommandReportLocation), getRemoteCommandReportLocation())
-                    .put(getStringRessource(R.string.keyRemoteConfiguration), getRemoteConfiguration());
+                    .put(getStringRessource(R.string.keyRemoteConfiguration), getRemoteConfiguration())
+                    .put(getStringRessource(R.string.keyCleanSession), getCleanSession());
+            Log.v("PREFERENCES", json.toString());
 
         } catch (JSONException e) {
             Log.e("Preferences", e.toString());
@@ -146,7 +145,6 @@ public class Preferences {
         try { setConnectionAdvancedMode(json.getBoolean(getStringRessource(R.string.keyConnectionAdvancedMode))); } catch (JSONException e) {}
         try { setSub(json.getBoolean(getStringRessource(R.string.keySub))); } catch (JSONException e) {}
         try { setPub(json.getBoolean(getStringRessource(R.string.keyPub))); } catch (JSONException e) {}
-        try { setUpdateAdressBook(json.getBoolean(getStringRessource(R.string.keyUpdateAddressBook))); } catch (JSONException e) {}
         try { setPubInterval(json.getInt(getStringRessource(R.string.keyPubInterval))); } catch (JSONException e) {}
         try { setPubTopicBase(json.getString(getStringRessource(R.string.keyPubTopicBase))); } catch (JSONException e) {}
         try { setNotification(json.getBoolean(getStringRessource(R.string.keyNotification))); } catch (JSONException e) {}
@@ -161,6 +159,7 @@ public class Preferences {
         try { setRemoteCommandDump(json.getBoolean(getStringRessource(R.string.keyRemoteCommandDump))); } catch (JSONException e) {}
         try { setRemoteCommandReportLocation(json.getBoolean(getStringRessource(R.string.keyRemoteCommandReportLocation))); } catch (JSONException e) {}
         try { setRemoteConfiguration(json.getBoolean(getStringRessource(R.string.keyRemoteConfiguration))); } catch (JSONException e) {}
+        try { setCleanSession(json.getBoolean(getStringRessource(R.string.keyCleanSession))); } catch (JSONException e) {}
 
     }
 
@@ -208,17 +207,21 @@ public class Preferences {
         return getBoolean(R.string.keySub, R.bool.valSub);
     }
 
-    public static boolean getUpdateAdressBook() {
-        return getBoolean(R.string.keyUpdateAddressBook,
-                R.bool.valUpdateAddressBook);
+    public static boolean getFollowingSelectedContact() {
+        return getBoolean(R.string.keyFollowingSelectedContact, R.bool.valFalse);
     }
 
-    public static String getTrackingUsername() {
-        return getString(R.string.keyTrackingUsername, R.string.valEmpty);
+    public static void setFollowingSelectedContact(boolean following) {
+        Log.v("Preferences", "foolow mode for selected contact: " + following);
+        setBoolean(R.string.keyFollowingSelectedContact, following);
     }
 
-    public static void setTrackingUsername(String topic) {
-        setString(R.string.keyTrackingUsername, topic);
+    public static String getSelectedContactTopic() {
+        return getString(R.string.keySelectedContactTopic, R.string.valEmpty);
+    }
+
+    public static void setSelectedContactTopic(String topic) {
+        setString(R.string.keySelectedContactTopic, topic);
     }
 
     public static int getLocatorDisplacement() {
@@ -241,26 +244,29 @@ public class Preferences {
 
     }
 
-    public static String getDeviceId(boolean androidIdFallback) {
-        String name = getString(R.string.keyDeviceId, R.string.valEmpty);
-        if (name.equals("") && androidIdFallback)
-            name = App.getAndroidId();
-        return name;
+    public static String getDeviceId(boolean fallback) {
+        String deviceId = getString(R.string.keyDeviceId, R.string.valEmpty);
+        if ("".equals(deviceId) && fallback)
+            deviceId = getDeviceIdFallback();
+        return deviceId;
     }
 
-    public static boolean getZeroLenghClientId() {
-        return getBoolean(R.string.keyZeroLenghClientIdEnabled, R.bool.valZeroLenghClientIdEnabled);
+    public static String getDeviceIdFallback() {
+        return getAndroidId();
     }
 
-    public static void setZeroLenghClientId(boolean enabled) {
-        Preferences.setBoolean(R.string.keyZeroLenghClientIdEnabled, enabled);
+    public static String getClientId(boolean fallback) {
+        String clientId = getString(R.string.keyClientId, R.string.valEmpty);
+        if ("".equals(clientId) && fallback)
+            clientId = getClientIdFallback();
+        return clientId;
     }
 
-    public static String getClientId(boolean androidIdFallback) {
-        String name = getString(R.string.keyClientId, R.string.valEmpty);
-        if (name.equals("") && androidIdFallback)
-            name = App.getAndroidId();
-        return name;
+    public static String getClientIdFallback() {
+        String username = getUsername();
+        String deviceId = getDeviceId(true);
+
+        return !"".equals(username) ? username+"/"+deviceId : deviceId;
     }
 
     public static void setClientId(String clientId) {
@@ -274,9 +280,9 @@ public class Preferences {
         return topic;
     }
 
-    public static String getPubTopicBase(boolean defaultFallback) {
+    public static String getPubTopicBase(boolean fallback) {
         String topic = getString(R.string.keyPubTopicBase, R.string.valEmpty);
-        if (topic.equals("") && defaultFallback)
+        if (topic.equals("") && fallback)
             topic = getPubTopicFallback();
 
         return topic;
@@ -311,9 +317,9 @@ public class Preferences {
 
     public static String getPubTopicFallback() {
         String deviceId = getDeviceId(true);
-        String userUsername = getUsername();
+        String username = getUsername();
 
-        return deviceId.equals("") || userUsername.equals("") ? "" : String.format(getStringRessource(R.string.valPubTopicBase), userUsername, deviceId);
+        return deviceId.equals("") || username.equals("") ? "" : String.format(getStringRessource(R.string.valPubTopicBase), username, deviceId);
     }
 
     public static void setHost(String value) {
@@ -367,10 +373,6 @@ public class Preferences {
 
     private static void setPub(boolean aBoolean) {
         setBoolean(R.string.keyPub, aBoolean);
-    }
-
-    private static void setUpdateAdressBook(boolean aBoolean) {
-        setBoolean(R.string.keyUpdateAddressBook, aBoolean);
     }
 
     private static void setPubInterval(int anInt) {
@@ -595,5 +597,14 @@ public class Preferences {
     public static boolean getBeaconRangingEnabled() {
         return getBoolean(R.string.keyBeaconRangingEnabled, R.bool.valBeaconRangingEnabled);
     }
+
+    public static Boolean getNotificationOnReceivedWaypointTransition() {
+        return getBoolean(R.string.keyNotificationOnReceivedWaypointTransition, R.bool.valNotificationOnReceivedWaypointTransition);
+    }
+
+    public static void setNotificationOnReceivedWaypointTransition(boolean val) {
+        setBoolean(R.string.keyNotificationOnReceivedWaypointTransition, val);
+    }
+
 
 }

@@ -208,19 +208,23 @@ public class ActivityPreferences extends PreferenceActivity {
 				@Override
 				public void onSharedPreferenceChanged(
 						SharedPreferences sharedPreferences, String key) {
-					if (key.equals(Preferences
-							.getKey(R.string.keyUsername))
-							|| key.equals(Preferences
-									.getKey(R.string.keyDeviceId)))
-						setPubTopicHint(topic);
+					if (key.equals(Preferences.getKey(R.string.keyUsername))|| key.equals(Preferences.getKey(R.string.keyDeviceId))) {
+                        setPubTopicHint(topic);
+                        setTrackerIdHint(trackerId);
+                    }
 				}
 			};
 			PreferenceManager.getDefaultSharedPreferences(a)
 					.registerOnSharedPreferenceChangeListener(pubTopicListener);
 
 			setPubTopicHint(topic);
+            setTrackerIdHint(trackerId);
 		}
-	}
+
+        public void setTrackerIdHint(EditTextPreference e) {
+            e.getEditText().setHint(Preferences.getTrackerIdFallback());
+        }
+    }
 
 	@Override
 	protected void onDestroy() {

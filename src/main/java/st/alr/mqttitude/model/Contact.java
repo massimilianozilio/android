@@ -30,7 +30,8 @@ public class Contact {
 	private int uid;
 	private String name;
 	private String topic;
-	private GeocodableLocation location;
+    private String trackerId;
+    private GeocodableLocation location;
 	private Bitmap userImage;
     private BitmapDescriptor userImageDescriptor;
 	private static final int userImageHeightScale = (int) convertDpToPixel(48);
@@ -87,7 +88,15 @@ public class Contact {
 		this.name = name;
 	}
 
-	public GeocodableLocation getLocation() {
+    public String getTrackerId() {
+        return trackerId;
+    }
+
+    public void setTrackerId(String tid) {
+        this.trackerId = tid;
+    }
+
+    public GeocodableLocation getLocation() {
 		return this.location;
 	}
 
@@ -96,6 +105,10 @@ public class Contact {
 		location.setTag(this.topic);// to find according contact once geocoder
 									// resolving returns
 	}
+
+    public boolean isLinked() {
+        return this.name != null;
+    }
 
 	@Override
 	public String toString() {

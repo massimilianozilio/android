@@ -1,6 +1,8 @@
 package st.alr.mqttitude.support;
 
 import st.alr.mqttitude.R;
+import st.alr.mqttitude.db.Waypoint;
+
 import android.content.Context;
 import android.util.Log;
 

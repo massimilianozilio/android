@@ -11,17 +11,6 @@
         android:key="topicSettings"
         android:title="@string/preferencesTopicSettings" >
 
-        <EditTextPreference
-            android:defaultValue="@string/valTrackerId"
-            android:dialogTitle="@string/preferencesTrackerId"
-            android:dialogMessage="@string/dialogMessageTrackerId"
-            android:key="@string/keyTrackerId"
-            android:summary="@string/preferencesTrackerIdSummary"
-            android:title="@string/preferencesTrackerId"
-            android:maxLength="2"
-            android:inputType="text"
-            android:digits="0123456789abcdefghilmnopqrstuvzxyjk"/>
-
         <CheckBoxPreference
             android:defaultValue="@bool/valPub"
             android:key="@string/keyPub"
@@ -43,6 +32,17 @@
             android:key="@string/keyPubIncludeBattery"
             android:summary="@string/preferencesIncludeBatterySummary"
             android:title="@string/preferencesIncludeBattery" />
+
+        <EditTextPreference
+            android:defaultValue="@string/valTrackerId"
+            android:dialogTitle="@string/preferencesTrackerId"
+            android:key="@string/keyTrackerId"
+            android:summary="@string/preferencesTrackerIdSummary"
+            android:title="@string/preferencesTrackerId"
+            android:maxLength="2"
+            android:inputType="textNoSuggestions"
+            android:digits="0123456789abcdefghilmnopqrstuvzxyjk"/>
+
     </PreferenceScreen>
     <PreferenceScreen
         android:key="activitySettings"
@@ -64,6 +64,11 @@
             android:key="@string/keyNotificationGeocoder"
             android:summary="@string/preferencesNotificationGeocoderSummary"
             android:title="@string/preferencesNotificationGeocoder" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/valNotificationOnReceivedWaypointTransition"
+            android:key="@string/keyNotificationOnReceivedWaypointTransition"
+            android:summary="@string/preferencesNotificationOnReceivedWaypointTransitionSummary"
+            android:title="@string/preferencesNotificationOnReceivedWaypointTransitionTitle" />
         <CheckBoxPreference
             android:defaultValue="@bool/valNotificationTickerOnPublish"
             android:key="@string/keyNotificationTickerOnPublish"
@@ -188,11 +193,6 @@
         </PreferenceCategory>
 
         <PreferenceCategory android:title="Misc">
-        <CheckBoxPreference
-            android:defaultValue="@bool/valUpdateAddressBook"
-            android:key="@string/keyUpdateAddressBook"
-            android:summary="@string/contactsLinkCloudStorageEnabledSummary"
-            android:title="@string/contactsLinkCloudStorageEnabled" />
 
         <CheckBoxPreference
             android:defaultValue="@bool/valConnectionAdvancedMode"
